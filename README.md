@@ -9,17 +9,36 @@ presenter, design), an orchestrator that drives them in order with partial re-ru
 contract so stages hand off through files (not chat), and a two-stage review + deterministic verify
 discipline before anything ships. The only topic-coupled piece is a single pluggable analysis slot.
 
+## Layout
+The repo mirrors where things land in your team repo, so it is obvious at a glance what is an agent
+and what is a Skill. Files ending in `.template.md` still need `<FILL: …>` completion; everything
+else is reused as-is.
+
+```
+agents/                                -> <repo>/.claude/agents/
+skills/paper-production-orchestrator/  -> <repo>/.claude/skills/paper-production-orchestrator/
+templates/HARNESS.template.md          -> <repo>/docs/HARNESS.md
+templates/CLAUDE-routing.template.md   -> paste into <repo>/CLAUDE.md
+```
+
 ## How to use (keep it clean)
-1. **Copy** `agents/*.md` into your team repo's **`.claude/agents/`** (project scope).
-2. **Install the orchestrator**: copy `orchestrator-SKILL.template.md` to
-   `.claude/skills/paper-production-orchestrator/SKILL.md`.
-3. **Wire routing**: paste `CLAUDE-routing.template.md` into your team's `CLAUDE.md`; put the lab map
-   from `HARNESS.template.md` at `docs/HARNESS.md`.
-4. **Add `manuscript-writer`**: copy `manuscript-writer.template.md` to
-   `.claude/agents/manuscript-writer.md` and fill its placeholders.
-5. **Fill every `<FILL: …>` placeholder IN THE TEAM ENVIRONMENT** (paths, result files, your
+
+```bash
+./install.sh /path/to/your/team-repo
+```
+
+That copies the agents and the orchestrator Skill into the repo's `.claude/`, drops the lab map at
+`docs/HARNESS.md`, stages the routing block, and then **prints every `<FILL: …>` placeholder you
+still have to complete**. Copying by hand works too — the arrows above are the whole mapping.
+
+Then:
+
+1. **Fill every `<FILL: …>` placeholder IN THE TEAM ENVIRONMENT** (paths, result files, your
    headline/framing stance, verify-gate command, affiliation). Do this in the team repo, not here.
-6. Do **NOT** put any of this in `~/.claude/` — that mixes contexts across projects. Keep it
+2. **Name your `<DOMAIN_ANALYSIS_AGENT>`** — the one topic-specific slot (see below).
+3. **Paste the routing block** from `.claude/CLAUDE-routing.to-paste.md` into your `CLAUDE.md`, then
+   delete the staged file.
+4. Do **NOT** put any of this in `~/.claude/` — that mixes contexts across projects. Keep it
    project-scoped to the team repo.
 
 ## The pluggable slot
@@ -40,9 +59,11 @@ connective tissue and does not change with the topic.
 | `agents/paper-orchestrator.md` | plans (does not execute) a multi-agent workflow | reuse as-is |
 | `agents/presenter.md` | manuscript → slide deck / talk | fill paths |
 | `agents/design.md` | logos/icons/brand & figure aesthetics (SVG+PNG) | reuse as-is |
-| `manuscript-writer.template.md` | preprint/journal/blog prose + figures | **fill required** |
-| `orchestrator-SKILL.template.md` | entry-point Skill: drives the loop, partial re-runs | **fill required** |
-| `HARNESS.template.md` | lab roster / org chart / per-agent JDs | **fill required** |
+| `agents/manuscript-writer.template.md` | preprint/journal/blog prose + figures | **fill required** |
+| `skills/paper-production-orchestrator/SKILL.template.md` | entry-point Skill: drives the loop, partial re-runs | **fill required** |
+| `templates/HARNESS.template.md` | lab roster / org chart / per-agent JDs | **fill required** |
+| `templates/CLAUDE-routing.template.md` | routing table + artifact contract to paste into `CLAUDE.md` | **fill required** |
+| `install.sh` | copies everything to the right paths, lists remaining `<FILL: …>` | run once |
 | `CLAUDE-routing.template.md` | NL routing + artifact-contract tables for CLAUDE.md | **fill required** |
 | `DESIGN_NOTES.md` | rationale: why the harness is built this way | reuse as-is (reference) |
 | `README.md` / `LICENSE` | this file + CC BY 4.0 note | reference |
