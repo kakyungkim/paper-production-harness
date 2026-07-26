@@ -1,6 +1,6 @@
 ---
 name: paper-production-orchestrator
-description: 논문 생산 루프의 입구(진행표/팀장) 스킬 템플릿. "논문 풀 파이프라인 돌려줘", "프리프린트 업데이트해서 제출 준비", "분석→집필→그림→검수까지 한 번에", "그림만 다시", "리뷰만 다시", "critic 지적 반영해", "최신 결과로 본문 갱신" 같이 분석·집필·그림·검수·검증·발표를 엮는 요청에서 사용한다. 기존 멤버(<DOMAIN_ANALYSIS_AGENT>, manuscript-writer, 그림 스킬, paper-critic, reviewer, presenter 등)를 정해진 순서로 호출하고 부분 재실행을 처리한다. 새 agent는 만들지 않는다.
+description: 논문 생산 루프의 입구(진행표/팀장) 스킬 템플릿. "논문 풀 파이프라인 돌려줘", "프리프린트 업데이트해서 제출 준비", "분석→집필→그림→검수까지 한 번에", "그림만 다시", "리뷰만 다시", "critic 지적 반영해", "최신 결과로 본문 갱신" 같이 분석·집필·그림·검수·검증·발표를 엮는 요청에서 사용한다. 기존 멤버(<DOMAIN_ANALYSIS_AGENT>, manuscript-writer, 그림 스킬, paper-critic, venue-reviewer, presenter 등)를 정해진 순서로 호출하고 부분 재실행을 처리한다. 새 agent는 만들지 않는다.
 ---
 
 # paper-production-orchestrator (논문 생산 루프 진행표 / 팀장) — 템플릿
@@ -28,7 +28,7 @@ description: 논문 생산 루프의 입구(진행표/팀장) 스킬 템플릿. 
 3. `<DOMAIN_ANALYSIS_AGENT>`가 LLM을 쓰는 경우, **offline mock 경로**(API 키 미설정 등)로 돌았는지 확인한다. mock이면 "실 LLM 결과 아님 / 데모"를 보고에 명시한다.
 
 ## 멤버 구성 (전원 기존 재사용)
-`<DOMAIN_ANALYSIS_AGENT>`(팀이 공급하는 주제별 분석/실험 agent), manuscript-writer(그림 포함 — 그림 스킬/그림 생성 스크립트 사용), paper-critic, reviewer, presenter. (기획 단계 선택: research-methodologist, literature-scout, novelty-strategist) (선택: `<DOMAIN_VERIFIER_AGENT>` — discordant/over-call 등 잠정 판정이 필요할 때.)
+`<DOMAIN_ANALYSIS_AGENT>`(팀이 공급하는 주제별 분석/실험 agent), manuscript-writer(그림 포함 — 그림 스킬/그림 생성 스크립트 사용), paper-critic, venue-reviewer, presenter. (기획 단계 선택: research-methodologist, literature-scout, novelty-strategist) (선택: `<DOMAIN_VERIFIER_AGENT>` — discordant/over-call 등 잠정 판정이 필요할 때.)
 
 > 참고: 그림 생성은 **agent가 아니라 Skill/스크립트**로 두는 것을 권장한다. 그림은 `manuscript-writer` agent가 `<FILL: 그림 생성 스크립트 또는 그림 스킬>`을 실행해 만든다. 단순 재생성이면 메인 루프가 직접 그 스크립트를 돌려도 된다(결정론적, 결과 파일에서 생성).
 
@@ -47,9 +47,10 @@ description: 논문 생산 루프의 입구(진행표/팀장) 스킬 템플릿. 
 5. **검수** — `paper-critic`(적대적 + 그림 시각 QA) → 지적 노트.
    - 블로킹 지적이면 6으로, 경미하면 메모만 남기고 진행.
 6. **수정** — `manuscript-writer`가 critic 지적 반영 → 본문 갱신.
-7. **(선택) 정식 리뷰** — 요청 시 `reviewer` → `<FILL: peer review note path>`.
-8. **검증 게이트** — `<FILL: your verify-gate command — 헤드라인 숫자를 결과 파일에서 결정론적으로 재계산>`.
-   - **실패하면 멈추고 사람에게 보고**한다. 커밋·발행하지 않는다.
+7. **검증 게이트 ①(결과 검증)** — `<FILL: your verify-gate command — 헤드라인 숫자를 결과 파일에서 결정론적으로 재계산>`. 실패하면 **멈추고** 사람에게 보고, 커밋·발행하지 않는다.
+   *리뷰보다 먼저 돈다* — `agents/paper-orchestrator.md`의 규칙: "paper-critic + gate FIRST, then venue-reviewer — the reviewer assumes pre-submission QA is done".
+8. **(선택) 정식 리뷰** — 요청 시 `venue-reviewer` → `<FILL: peer review note path>`. **7을 통과한 원고만** 입력한다.
+8.5 **검증 게이트 ②(패키지 검증, 공개 직전)** — 리뷰 반영으로 본문이 바뀌었을 수 있다. 본문 숫자 ↔ 결과 파일 재대조 + 그림·표·supplementary 동봉 확인.
 9. **(선택) 발표** — 요청 시 `presenter` → 덱·발제.
 
 각 단계 산출물은 **파일로 남긴다**(대화로만 끝내지 않는다). 다음 단계는 그 파일을 읽는다.
@@ -62,7 +63,7 @@ description: 논문 생산 루프의 입구(진행표/팀장) 스킬 템플릿. 
 | 집필 | manuscript-writer | `<FILL: manuscript files>` | 검수·리뷰·발표 |
 | 그림 | manuscript-writer (그림 스킬/스크립트) | `<FILL: figures dir>` | 집필·검수 |
 | 검수 | paper-critic | 적대 노트 + 그림 QA | 집필(수정) |
-| 리뷰 | reviewer | `<FILL: peer review note path>` | 집필(수정) |
+| 리뷰 | venue-reviewer | `<FILL: peer review note path>` | 집필(수정) |
 | 발표 | presenter | 슬라이드/발제 | 사람 |
 
 ## 실패 처리 / 멈춤 조건
