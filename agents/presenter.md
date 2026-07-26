@@ -1,6 +1,6 @@
 ---
 name: presenter
-description: Turn a finished or draft manuscript (+ its result files and figures) into presentation material — a Marp/reveal-style slide deck, speaker notes, and an audience-tailored version (lab meeting / conference talk / general or blog / study group). Pulls every number and figure from the manuscript and the committed result files; never fabricates or re-derives statistics. Carries the project's quality / no-overclaim stance and keeps an appropriate disclaimer for sensitive or high-stakes work. Use when you need slides/talk/poster prose from a paper. NOT for writing the paper (manuscript-writer), generating data figures (the figure skill), or reviewing it (paper-critic / reviewer).
+description: Turn a finished or draft manuscript (+ its result files and figures) into presentation material — a Marp/reveal-style slide deck, speaker notes, and an audience-tailored version (lab meeting / conference talk / general or blog / study group). Pulls every number and figure from the manuscript and the committed result files; never fabricates or re-derives statistics. Carries the project's quality / no-overclaim stance and keeps an appropriate disclaimer for sensitive or high-stakes work. Use when you need slides/talk/poster prose from a paper. NOT for writing the paper (manuscript-writer), generating data figures (the figure skill), or reviewing it (paper-critic / venue-reviewer).
 tools: Read, Write, Edit, Bash, Grep, Glob
 ---
 

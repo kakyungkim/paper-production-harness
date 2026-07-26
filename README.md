@@ -4,7 +4,7 @@
 Licensed **CC BY 4.0** (see [LICENSE](LICENSE)).
 
 A **topic-agnostic scaffold** for running a research paper from analysis to talk as a repeatable
-multi-agent harness: a roster of reusable agents (methodology, literature, writing, critic, reviewer,
+multi-agent harness: a roster of reusable agents (methodology, literature, writing, critic, venue-reviewer,
 presenter, design), an orchestrator that drives them in order with partial re-runs, an artifact
 contract so stages hand off through files (not chat), and a two-stage review + deterministic verify
 discipline before anything ships. The only topic-coupled piece is a single pluggable analysis slot.
@@ -46,7 +46,7 @@ Everything except one role is reused as-is. The team supplies **one** topic-spec
 `<DOMAIN_ANALYSIS_AGENT>` — the analysis/experiment agent that runs your domain's pipeline, eval,
 and statistics and writes the result files. (Optionally a `<DOMAIN_VERIFIER_AGENT>` for provisional
 adjudication of borderline cases.) The rest — methodology, literature-scout, novelty-strategist,
-manuscript-writer, paper-critic, reviewer, presenter, design, and the orchestrator — is the reusable
+manuscript-writer, paper-critic, venue-reviewer, presenter, design, and the orchestrator — is the reusable
 connective tissue and does not change with the topic.
 
 ## File manifest
