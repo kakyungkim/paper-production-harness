@@ -30,7 +30,7 @@
 | 6 | `paper-critic` | 심사·QA | 제출 전 적대적 자체검토 + 그림 시각 QA | 재사용 |
 | 7 | `paper-orchestrator` | 코디네이션 | 멀티-agent 작업 **계획** 수립(실행은 PI) | 재사용 |
 | 8 | `design` (선택) | 엔지니어링 | 로고·아이콘·브랜드·그림 미감(SVG/PNG) | 재사용 |
-| 9 | `reviewer` (전역, 선택) | 심사·QA | 정식 venue 스타일 **공식 리뷰 문서** 작성 | 재사용 |
+| 9 | `venue-reviewer` (프로젝트 로컬, 선택) | 심사·QA | 정식 venue 스타일 **공식 리뷰 문서** 작성 | 재사용 |
 | S | 그림 생성 (Skill/스크립트, agent 아님) | 엔지니어링 | 결과 파일에서 그림 생성·번호 정합 | **FILL**(스크립트/스킬 지정) |
 
 > ⚠️ 그림 생성은 Skill/스크립트로 두는 것을 권장한다. agent로 호출하면 실패한다. 그림은 `manuscript-writer` agent가 `<FILL: 그림 생성 스크립트/스킬>`을 실행해 만든다. 단순 재생성은 메인 루프가 직접 돌려도 된다(결정론적, 결과 파일에서 생성).
@@ -52,7 +52,7 @@
  문헌·기획      분석실      집필실          심사·QA       엔지니어링
  ────────      ──────      ──────          ───────       ──────────
  literature-   <DOMAIN_    manuscript-     paper-critic  design(선택)
-   scout        ANALYSIS_   writer         reviewer(선택) [그림 생성=
+   scout        ANALYSIS_   writer         venue-reviewer(선택) [그림 생성=
  novelty-       AGENT>      presenter       (그림 QA는     skill/스크립트,
    strategist  <DOMAIN_                     paper-critic)   run by writer]
  research-      VERIFIER_
@@ -67,7 +67,7 @@ research-methodologist / literature-scout / novelty-strategist   (기획·근거
                  └─(모호 사례)─▶ <DOMAIN_VERIFIER_AGENT>           (잠정 판정, 선택)
         └─▶ manuscript-writer ──▶ <FILL: manuscript files>        (집필)
                  ║  그림 스크립트/스킬 ──▶ <FILL: figures dir>     (그림)
-        └─▶ paper-critic ──▶ reviewer ──▶ <FILL: peer review>     (심사)
+        └─▶ paper-critic ──▶ venue-reviewer ──▶ <FILL: peer review>     (심사)
                  └─▶ (수정 반영) manuscript-writer
         └─▶ <FILL: verify gate> ──▶ presenter                     (검증→발표)
 ```
@@ -111,7 +111,7 @@ research-methodologist / literature-scout / novelty-strategist   (기획·근거
 
 **`paper-critic`** — 제출 전 적대적 검토자(내부). 과대주장·누락 baseline/ablation·통계 갭·누수·재현성·신규성 + **그림 시각 QA**(텍스트-그래픽 겹침, tofu, 잘림). 우선순위 fix 제시. QA를 소유.
 
-**`reviewer`** (전역, 선택) — venue 스타일 권고·항목별 점수·리포팅 가이드라인 체크가 담긴 **실제 referee 리뷰 문서**. 경계: 사전 QA(번호·출처·그림 렌더)는 이미 끝났다고 가정(paper-critic 소관).
+**`venue-reviewer`** (프로젝트 로컬, 선택) — venue 스타일 권고·항목별 점수·리포팅 가이드라인 체크가 담긴 **실제 referee 리뷰 문서**. 경계: 사전 QA(번호·출처·그림 렌더)는 이미 끝났다고 가정(paper-critic 소관).
 
 ### 엔지니어링·제작 (선택)
 
