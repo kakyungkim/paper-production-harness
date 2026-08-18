@@ -70,6 +70,9 @@ Layer 1의 증거 사다리는 "deterministic check(Lv3)"를 믿는다. **그 �
 7. **못 잡으면(NOT_TESTED) detector 신설로 gap을 닫고 재검증** — 탐지에서 끝내지 않는다. detector는 결정론(LLM 판단 없음, 등록값·substring 대조), 등급은 assist(자동 환원 금지).
 8. **음성 대조로 러너 자체 검사** — 기대를 일부러 틀리게 선언한 케이스에서 러너가 불일치를 잡아야 한다(관측 ≠ 기대). 러너가 그걸 통과시키면 러너가 고장.
 
+## fail-closed — '검사 못 한 것'은 '통과'가 아니다
+게이트가 mutation을 잡아도(CAUGHT), 실데이터에선 필수 컬럼 부재·검사 대상 0건이라 **아무것도 안 보고 통과**할 수 있다(VACUOUS). 판정을 세 갈래로 벌려 '통과'와 '검사 안 함'을 절대 섞지 않는다 — **CAUGHT**(결함 잡음)·**SURVIVED**(못 잡음)·**VACUOUS/NOT_TESTED**(검사 자체가 공허). 규칙: 빈 `evidence[]`는 pass 불가, 조회·lookup 실패는 pass 불가(NEEDS_HUMAN), 필수 입력 부재는 pass가 아니라 명명된 거부(`missing_required_columns`·`no_rows_checked` 등). 의심스러우면 **fail-closed**(막고 사람에게). mutation을 통과(CAUGHT)한 게이트도 실데이터에서 VACUOUS일 수 있으니, mutation 검증과 fail-closed는 **둘 다** 필요하다.
+
 ## 안전
 - mutation은 **sandbox 사본(`.sandbox/`, gitignore)**에서만. 정본은 실행 전후 **SHA-256 동일**을 assert(검수가 정본을 안 건드림).
 - 단일소스 전제: "evidence 바꾸고 원고 stale" 류 mutation은 바꾼 값이 **근거 파일 하나에만** 있어야 stale이 드러난다. 다중소스 값은 피하고 단일소스 값을 골라 전제로 기록.
@@ -96,6 +99,7 @@ Layer 1의 "증거 우선순위 사다리"를 실제 방법으로 채운 것. **
 | **claim ledger 무결성** | claim 등급 무단 격상·한계 삭제·근거 밖 수치 | claim_level↔status(primary는 supported 요구)·limitations 수치가 원고 실재·key_number가 evidence 파일 실재. 등록값 substring 대조(Layer 2 mutation으로 이 검사가 진짜 잡는지 먼저 증명) |
 | **재계산 diff-0** | 재계산이 커밋값과 다름(드리프트·비결정성) | 게이트 실행 후 산출물 git diff가 비어야 PASS('실행됨'≠'일치'). 게이트가 새로 더럽힌 파일만 복원(남의 미커밋 보호) |
 | **인용문 훼손** | 인용 원문이 바뀜 | 원문 코퍼스와 substring 대조 |
+| **다중 렌더 parity** | 정본에서 손으로 옮겨적은 표·산문·번역판 수치가 정본과 어긋남 | 정본(JSON/결과)↔markdown 표·산문·다른 언어판의 같은 수치 대조. 재계산과 **다른 실패모드**(옮겨적기·번역이 낡음). 탐지기는 불일치만 나열, 판정은 사람 |
 
 ## 증거 독립성 사다리 — 실사용 계단
 - **Lv1 same-model 자기비평** (과제1 prompt loop): 질문 후보만, 사실 증명 아님.
