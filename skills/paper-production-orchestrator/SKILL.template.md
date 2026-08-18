@@ -36,6 +36,7 @@ description: 논문 생산 루프의 입구(진행표/팀장) 스킬 템플릿. 
 - `<FILL: your quality/framing stance>` 유지 — 통계가 뒷받침하지 않는 우월 주장 금지.
 - 숫자는 결과 파일·검증된 base에서만(메모리 재유도 금지). bootstrap CI + 적절한 유의성 검정 동반.
 - 그림은 결과 파일에서 생성(하드코딩 금지), 번호는 첫 언급 순.
+- **headline claim은 방어가능성 게이트 통과 전엔 PROVISIONAL** — 반증기준 + make-or-break 검정 + advisor 통과 전까지 본문에 반영하지 않는다.
 
 ## 실행 흐름
 
@@ -49,6 +50,10 @@ description: 논문 생산 루프의 입구(진행표/팀장) 스킬 템플릿. 
 6. **수정** — `manuscript-writer`가 critic 지적 반영 → 본문 갱신.
 7. **검증 게이트 ①(결과 검증)** — `<FILL: your verify-gate command — 헤드라인 숫자를 결과 파일에서 결정론적으로 재계산>`. 실패하면 **멈추고** 사람에게 보고, 커밋·발행하지 않는다.
    *리뷰보다 먼저 돈다* — `agents/paper-orchestrator.md`의 규칙: "paper-critic + gate FIRST, then venue-reviewer — the reviewer assumes pre-submission QA is done".
+   게이트를 신뢰하려면 세 가지를 지킨다(상세 방법: `skills/verify-harness`):
+   - **'실행됨'이 아니라 'diff 0'** — rc=0은 실행 성공이지 값 일치가 아니다. 재계산 산출물이 커밋값과 byte-identical인지(git diff가 비었는지)로 판정하고, 게이트가 새로 더럽힌 파일만 되돌린다(남의 미커밋 보호).
+   - **게이트가 공허하지 않은지 먼저 증명** — 알려진 결함(근거 없는 수치·stale 원고·claim 격상)을 사본에 주입해 게이트가 잡는지 본다(mutation). 못 잡는 검사는 그 결함 부류에 NOT_TESTED다.
+   - **리포트는 검사 대상 코퍼스 밖에 쓴다** — 원고·결과와 같은 폴더에 두면 다음 검사가 자기 리포트를 근거로 통과시키는 circular evidence가 난다.
 8. **(선택) 정식 리뷰** — 요청 시 `venue-reviewer` → `<FILL: peer review note path>`. **7을 통과한 원고만** 입력한다.
 8.5 **검증 게이트 ②(패키지 검증, 공개 직전)** — 리뷰 반영으로 본문이 바뀌었을 수 있다. 본문 숫자 ↔ 결과 파일 재대조 + 그림·표·supplementary 동봉 확인.
 9. **(선택) 발표** — 요청 시 `presenter` → 덱·발제.
