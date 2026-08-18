@@ -134,6 +134,7 @@ research-methodologist / literature-scout / novelty-strategist   (기획·근거
 | 산출물 계약 | `<FILL>` (파일 경로 검증?) |
 | 입구(Orchestrator **Skill**) | `<FILL>` (orchestrator-SKILL 설치?) |
 | 검증 게이트 | `<FILL>` (헤드라인 숫자 결정론적 재계산 스크립트?) |
+| 검증 깊이 | `<FILL>` (게이트를 mutation으로 검증·재계산 diff-0·독립성 사다리(cross-model/사람)·claim-defensibility·사전등록 적용? `skills/verify-harness` 설치?) |
 | 개선 루프(improvement-log) | `<FILL>` (회고를 어디에 기록?) |
 
 > 멤버가 일급이어도 **연결 조직(입구·라우팅·산출물 계약·검증 게이트·개선 루프)** 이 비면 성숙도가 낮다.
