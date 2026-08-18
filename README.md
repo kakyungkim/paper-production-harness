@@ -7,7 +7,8 @@ A **topic-agnostic scaffold** for running a research paper from analysis to talk
 multi-agent harness: a roster of reusable agents (methodology, literature, writing, critic, venue-reviewer,
 presenter, design), an orchestrator that drives them in order with partial re-runs, an artifact
 contract so stages hand off through files (not chat), and a two-stage review + deterministic verify
-discipline before anything ships. The only topic-coupled piece is a single pluggable analysis slot.
+discipline before anything ships — with a mutation layer that checks the gates themselves catch defects.
+The only topic-coupled piece is a single pluggable analysis slot.
 
 ## Layout
 The repo mirrors where things land in your team repo, so it is obvious at a glance what is an agent
@@ -17,6 +18,9 @@ else is reused as-is.
 ```
 agents/                                -> <repo>/.claude/agents/
 skills/paper-production-orchestrator/  -> <repo>/.claude/skills/paper-production-orchestrator/
+skills/verify-harness/                 -> <repo>/.claude/skills/verify-harness/
+hooks/git-drift-check.sh               -> <repo>/.claude/hooks/  (register in settings.json SessionStart)
+schemas/critic_report.schema.template.json -> <repo>/schemas/
 templates/HARNESS.template.md          -> <repo>/docs/HARNESS.md
 templates/CLAUDE-routing.template.md   -> paste into <repo>/CLAUDE.md
 ```
@@ -61,6 +65,9 @@ connective tissue and does not change with the topic.
 | `agents/design.md` | logos/icons/brand & figure aesthetics (SVG+PNG) | reuse as-is |
 | `agents/manuscript-writer.template.md` | preprint/journal/blog prose + figures | **fill required** |
 | `skills/paper-production-orchestrator/SKILL.template.md` | entry-point Skill: drives the loop, partial re-runs | **fill required** |
+| `skills/verify-harness/SKILL.template.md` | verification Skill: AKM fact-check + mutation (verify the gates) + fail-closed + check catalog / independence ladder | reuse as-is (self-contained) |
+| `hooks/git-drift-check.sh` | SessionStart branch ahead/behind early warning (never blocks) | reuse as-is (set `DRIFT_BASE`) |
+| `schemas/critic_report.schema.template.json` | critic report as a schema-checked artifact: required fields, status enum, evidence-required, reviewer≠owner | fill check names |
 | `templates/HARNESS.template.md` | lab roster / org chart / per-agent JDs | **fill required** |
 | `templates/CLAUDE-routing.template.md` | routing table + artifact contract to paste into `CLAUDE.md` | **fill required** |
 | `install.sh` | copies everything to the right paths, lists remaining `<FILL: …>` | run once |

@@ -1,0 +1,35 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$comment": "재사용 템플릿. critic/검증 리포트를 산문이 아니라 기계검증 아티팩트로 강제한다. check 이름 목록은 팀 도메인에 맞게 채우되, 아래 규율(필수필드·status enum·evidence 최소 1·additionalProperties:false·reviewer!=owner)은 그대로 둔다. reviewer!=owner 는 JSON schema로 표현 불가라 러너가 로드 시 강제해야 한다(주석 참고).",
+  "title": "critic report (template)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["target", "reviewer", "owner", "checks"],
+  "properties": {
+    "target": { "type": "string", "description": "검증 대상(원고/결과 파일 등)" },
+    "reviewer": { "type": "string", "description": "검수자. 러너가 reviewer != owner 를 강제한다(스키마로는 못 막음)." },
+    "owner": { "type": "string", "description": "대상 작성자. reviewer와 같으면 러너가 거부." },
+    "checks": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "status", "evidence"],
+        "properties": {
+          "name": { "type": "string" },
+          "status": {
+            "enum": ["pass", "fail", "needs_human", "not_tested"],
+            "description": "not_tested/needs_human 은 pass 가 아니다(fail-closed). 조회·lookup 실패는 needs_human."
+          },
+          "evidence": {
+            "type": "array",
+            "items": { "type": "string" },
+            "minItems": 1,
+            "description": "빈 evidence 는 스키마가 거부한다 — 근거 없는 pass 금지."
+          }
+        }
+      }
+    }
+  }
+}
